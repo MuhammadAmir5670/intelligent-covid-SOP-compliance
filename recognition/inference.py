@@ -8,7 +8,6 @@ from pathlib import Path
 from align import AlignDlib
 from collections import defaultdict
 from inception_blocks import faceRecoModel
-from face_recognition import face_locations
 
 from keras import backend as K
 
@@ -61,7 +60,7 @@ class FaceRecognizer:
         return embedding
 
     def get_locations(self, image):
-        locations = face_locations(image)
+        locations = self.detector(image)
         coors = []
         for loc in locations:
             coors.append((loc[-1], loc[0], loc[1], loc[2]))
