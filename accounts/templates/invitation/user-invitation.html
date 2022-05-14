@@ -1,0 +1,6 @@
+Hi {{ user.username }}!
+
+{{ admin.email }} has invited you to join Hostel Billing system app.
+please use the link below to complete the account activation process.
+
+http://{{ domain }}{% url 'accept-invitation' uidb64=uidb64 token=user.confirmation_token %}

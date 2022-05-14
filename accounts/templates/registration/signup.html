@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ block.super }} - Register User
+{% endblock title %}
+
+
+{% block content %}
+<div class="row w-100 mh-100 m-0 justify-content-center align-items-center">
+    <form method="post">
+        <h1>Create Account</h1>
+        <hr>
+        {% csrf_token %}
+
+        {% include 'includes/form.html' %}
+
+        <button type="submit" class="btn btn-success">Create Account</button>
+
+        <hr>
+        <a href="{% url 'login' %}" class="mt-2 d-block text-center"><small>Already have an account? Login</small></a>
+    </form>
+</div>
+{% endblock content %}

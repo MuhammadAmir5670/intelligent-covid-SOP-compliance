@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ block.super }} - Invite Buyer
+{% endblock title %}
+
+
+{% block content %}
+<div class="row w-100 mh-100 m-0 justify-content-center align-items-center">
+    <form method="post">
+        <h1>Invite User</h1>
+        <hr>
+        {% csrf_token %}
+
+        {% include 'includes/form.html' %}
+
+        <button type="submit" class="btn btn-success">Invite</button>
+
+    </form>
+</div>
+{% endblock content %}
