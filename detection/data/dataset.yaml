@@ -1,0 +1,6 @@
+train: ./data/dataset/train/images
+val: ./data/dataset/validation/images
+
+nc: 3
+
+names: ['mask', 'no_mask', 'mask_not_in_position']
