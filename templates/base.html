@@ -12,16 +12,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Optional Stylesheets -->
+    <link rel="stylesheet" href="{% static 'css/theme/bootstrap.theme.min.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    
     {% block stylesheets %}
-        <link rel="stylesheet" href="{% static 'css/theme/bootstrap.theme.min.css' %}">
         <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% endblock stylesheets %}
         
 </head>
-<body>
+<body class="body-pd">
 
     
     {% block body %}
+
+    {% include 'shared/header.html' %}
+    {% include 'shared/sidebar.html' %}
 
     {% block content %} {% endblock content %}
 
