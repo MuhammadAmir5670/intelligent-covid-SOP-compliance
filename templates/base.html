@@ -1,11 +1,12 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
+
 <head>
-    <title>        
+    <title>
         {% block title %}
-            Face App
-        {% endblock title %} 
+        Face App
+        {% endblock title %}
     </title>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -13,35 +14,39 @@
 
     <!-- Optional Stylesheets -->
     <link rel="stylesheet" href="{% static 'css/theme/bootstrap.theme.min.css' %}">
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
-    
-    {% block stylesheets %}
-        <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    {% endblock stylesheets %}
-        
-</head>
-<body class="body-pd">
 
-    
+    <!-- Optional Stylesheets -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block stylesheets %} {% endblock stylesheets %}
+
+</head>
+
+<body id="body-pd">
+
+
     {% block body %}
 
     {% include 'shared/header.html' %}
     {% include 'shared/sidebar.html' %}
 
-    {% block content %} {% endblock content %}
+    <div class="container-fluid">
+        {% block content %} {% endblock content %}
+    </div>
 
     {% endblock body %}
-        
-    
+
+
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
     <!-- Optional JavaScript -->
-    
-    {% block scripts %} 
-        <script src="{% static 'js/app.js' %}"></script>
-    {% endblock scripts %}
+    <script src="{% static 'js/app.js' %}"></script>
+
+    {% block scripts %} {% endblock scripts %}
 </body>
+
 </html>
