@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+{{ block.super }} - Add new student
+{% endblock title %}
+
+
+{% block stylesheets %}
+<link href="{% static 'vendor/image-uploader/css/image-uploader.min.css' %}" rel="stylesheet">
+{% endblock stylesheets %}
+
+
+
+
+{% block content %}
+<div class="row justify-content-center align-items-center">
+    <form method="post" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-6">
+                <h1>Add New Student </h1>
+                {% include 'shared/messages.html' %}
+
+                <hr>
+                {% csrf_token %}
+
+                {% include 'shared/form.html' %}
+
+                <!-- Image input box for providing input images for training -->
+                <div class="input-field mt-4">
+                    <label class="active text-dark  ">Images For Training</label>
+                    <div class="input-images"></div>
+                </div>
+
+                <button type="submit" class="btn btn-success mt-3">Add New Student</button>
+            </div>
+
+            <!-- Profile Image Input -->
+            <div class="col-6">
+
+                <!-- Prodile Image display box before upload -->
+                <div class="image-container rounded p-1 border mb-3">
+                    <img src="{% static 'images/demo-profile.jpg' %}" width="100%" height="auto" class="rounded" id="imageUploadPreview" alt="Admin">
+                </div>
+                <div class="custom-file mb-3">
+                    <input type="file" class="custom-file-input" id="Profile-image" name="profile_image">
+                    <label class="custom-file-label" for="Profile-image">Choose Image</label>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock content %}
+
+
+
+{% block scripts %}
+<script src="{% static 'vendor/image-uploader/js/image-uploader.min.js' %}"></script>
+
+<script>
+    $(document).ready(function () {
+        $('.input-images').imageUploader({
+            label: 'Drag & Drop files here or click to browse',
+            imagesInputName: 'images',
+            extensions: ['.jpg', '.jpeg', '.png', '.JPG', '.JPEG', '.PNG'],
+            maxFiles: 5,
+        });
+
+        function PreviewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#imageUploadPreview').attr('src', e.target.result);
+                }
+                $(input).next().text(input.files[0].name)
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $("#Profile-image").change(function () {
+            PreviewImage(this);
+        });
+    })
+</script>
+{% endblock scripts %}

@@ -152,7 +152,7 @@ AUTHENTICATION_BACKENDS = [
 if DEBUG:
     # Media files (Files uploaded by the user)
     MEDIA_URL = '/media/'
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # 'data' is my media folder
+    MEDIA_ROOT = BASE_DIR / 'media' # 'data' is my media folder
 
     TEMPLATES[0]['OPTIONS']['context_processors'] += [
         'django.template.context_processors.media',
