@@ -5,4 +5,4 @@ from manager.models import Student
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
-        exclude = ['profile_image']
+        fields = '__all__'

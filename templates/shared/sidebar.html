@@ -6,15 +6,19 @@
                 <span class="nav_logo-name">BBBootstrap</span>
             </a>
             <div class="nav_list">
-                <a href="#" class="nav_link active"> <i class='bx bx-grid-alt nav_icon'></i>
-                    <span class="nav_name">Dashboard</span> </a>
-                <a href="{% url 'students-index' %}" class="nav_link">
-                    <i class='bx bx-user nav_icon'></i>
-                    <span class="nav_name">Users</span>
+                <a href="#" class="nav_link"> <i class='bx bx-grid-alt nav_icon'></i>
+                    <span class="nav_name">Dashboard</span>
                 </a>
-                <a href="#" class="nav_link">
+                {% url 'students-index' as url %}
+                <a href="{{ url }}" class="nav_link {% if request.path == url %} active {% endif %}">
+                    <i class='bx bx-user nav_icon'></i>
+                    <span class="nav_name">Students</span>
+                </a>
+                
+                {% url 'stream-index' as url %}
+                <a href="{{ url }} " class="nav_link {% if request.path == url %} active {% endif %}">
                     <i class='bx bx-message-square-detail nav_icon'></i>
-                    <span class="nav_name">Messages</span>
+                    <span class="nav_name">Stream</span>
                 </a>
                 <a href="#" class="nav_link">
                     <i class='bx bx-bookmark nav_icon'></i>

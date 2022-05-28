@@ -1,5 +1,4 @@
 $( document ).ready(function() {
-    console.log('loaded');
     
     const showNavbar = (toggleId, navId, bodyId, headerId) => {
         let toggle = document.getElementById(toggleId),
@@ -11,9 +10,7 @@ $( document ).ready(function() {
     
         // Validate that all variables exist
         if (toggle && nav && bodypd && headerpd) {
-            console.log(toggle && nav && bodypd && headerpd);
             toggle.addEventListener('click', () => {
-                console.log('clicked');
                 // show navbar
                 nav.classList.toggle('show')
                 // change icon

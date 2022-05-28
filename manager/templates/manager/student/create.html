@@ -24,7 +24,13 @@
                 <hr>
                 {% csrf_token %}
 
-                {% include 'shared/form.html' %}
+                
+                {% for field in form %}
+                    {% if field.name != 'profile_image' %}
+                        {% include 'shared/field.html' %}
+                    {% endif %}
+                {% endfor %}
+                    
 
                 <!-- Image input box for providing input images for training -->
                 <div class="input-field mt-4">
