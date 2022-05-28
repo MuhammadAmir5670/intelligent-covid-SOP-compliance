@@ -3,7 +3,7 @@ import os
 import cv2
 
 from pathlib import Path
-from detection.detector import Detector
+from detector import Detector
 
 BASE_PATH = Path(os.path.dirname(os.path.abspath(__file__)))
 

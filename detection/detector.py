@@ -69,7 +69,7 @@ class Detector:
                 detections[:, :4] = scale_coords(image_.shape[2:], detections[:, :4], image.shape).round()
 
                 for *coors, conf, cls in detections:
-                    result = self.inference(np.array(coors).tolist(), conf, cls)
+                    result = self.inference(np.array(coors, dtype=int).tolist(), conf, cls)
 
                     if result:
                         inference.append(result)
