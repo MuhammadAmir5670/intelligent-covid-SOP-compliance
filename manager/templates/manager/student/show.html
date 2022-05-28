@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block stylesheets %}
+<style>
+    .image-container {
+        position: relative;
+        max-width: 150px;
+        max-height: 150px;
+        overflow: hidden;
+    }
+
+    .image-container.circle {
+        border-radius: 50%;
+    }
+
+    .image-container img {
+        width: 100%;
+        height: auto;
+        top: 0;
+    }
+</style>
+{% endblock stylesheets %}
+
+
+{% block content %}
+<!-- Begin Page Content -->
+<div class="container pt-5">
+    <div class="row gutters-sm">
+        <div class="col-lg-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex flex-column align-items-center text-center">
+                        <div class="image-container circle">
+                            <img src="{{ student.profile_image.url }}" alt="Admin">
+                        </div>
+                        <div class="mt-3">
+                            <h4>{{ student.name }}</h4>
+                            <p class="text-secondary mb-1">Registration Number - {{ student.roll_no }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <h6 class="mb-0"><b>Full Name:</b></h6>
+                        </div>
+                        <div class="col-sm-8 text-secondary">
+                            {{ student.name }}
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <h6 class="mb-0"><b>Registration Number:</b></h6>
+                        </div>
+                        <div class="col-sm-8 text-secondary">
+                            {{ student.roll_no }}
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <h6 class="mb-0"><b>Email:</b></h6>
+                        </div>
+                        <div class="col-sm-8 text-secondary">
+                            {{ student.email }}
+                        </div>
+                    </div>
+                    <hr>
+                    <!-- Student Information Edit Button -->
+                    <button class="btn btn-primary btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                        </span>
+                        <span class="text">Edit</span>
+                    </button>
+
+                    <!-- Student Delete Button -->
+                    <button class="btn btn-danger btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </span>
+                        <span class="text">Delete</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- /.container-fluid -->
+
+{% endblock content %}
