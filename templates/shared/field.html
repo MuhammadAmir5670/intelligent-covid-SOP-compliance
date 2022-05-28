@@ -1,0 +1,40 @@
+{% load widget_tweaks %}
+
+<div class="form-group">    
+    
+    {% comment %} if form has data assosiated with it {% endcomment %}
+    {% if form.is_bound %}
+        
+        {% comment %} if any of the field data is invalid {% endcomment %}
+        {% if field.errors %}
+
+            {% comment %} turn invalid fields to red {% endcomment %}
+            {% render_field field class='form-control form-control-user is-invalid' class=extra_classes placeholder=field.label %}
+            
+            {% comment %} display errors assosiated with that partocular field {% endcomment %}
+            {% for error in field.errors %}
+                <div class="invalid-feedback">
+                    {{ error }}
+                </div>
+            {% endfor %}
+
+        {% else %}
+            
+            {% if form.non_field_errors %}
+                {% comment %} turn invalid fields to red {% endcomment %}
+                {% render_field field class='form-control form-control-user is-invalid' class=extra_classes placeholder=field.label %}
+            {% else %}
+                {% comment %} turn the fields with valid data to green {% endcomment %}
+                {% render_field field class='form-control form-control-user is-valid' class=extra_classes placeholder=field.label %}
+            {% endif %}
+        
+                
+        {% endif %}
+
+    {% else %}
+
+        {% render_field field class='form-control form-control-user' class=extra_classes placeholder=field.label %}
+            
+    {% endif %} 
+    
+</div>

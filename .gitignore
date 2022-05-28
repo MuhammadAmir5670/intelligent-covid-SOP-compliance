@@ -27,6 +27,8 @@ face_recognition/inference/output
 .installed.cfg
 *.egg
 MANIFEST
+recognition/faces_database
+media/faces_database
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

@@ -6,8 +6,6 @@ import numpy as np
 from pathlib import Path
 from face_recognition import face_encodings, face_distance
 
-from keras import backend as K
-
 BASE_PATH = Path(os.path.dirname(os.path.abspath(__file__)))
 
 # add packages to python load paths
@@ -19,7 +17,6 @@ sys.path.append(str((BASE_PATH.parent / 'recognition').resolve()))
 from detection import FaceDetector
 from recognizer_utils import Database
 
-K.set_image_data_format('channels_first')
 
 class FaceRecognizer:
     
@@ -45,7 +42,6 @@ class FaceRecognizer:
             distances = face_distance(self.database.encodings, encoding)
             # index of matched face encoding with minimum euclidean distance
             best_match_index = np.argmin(distances)
-            print(distances)
             # Check if the face is enough accurate to be recognized
             if distances[best_match_index] <= tolerance:
                 name = self.database.names[best_match_index]
