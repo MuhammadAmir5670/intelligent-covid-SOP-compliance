@@ -1,103 +1,54 @@
 import os
+import sys
 import cv2
-import dlib
-import json
 
 import numpy as np
 from pathlib import Path
-from align import AlignDlib
-from collections import defaultdict
-from inception_blocks import faceRecoModel
+from face_recognition import face_encodings, face_distance
 
 from keras import backend as K
 
-from detection.face_detector import FaceDetector
-K.set_image_data_format('channels_first')
-
-
 BASE_PATH = Path(os.path.dirname(os.path.abspath(__file__)))
 
+# add packages to python load paths
+sys.path.append(str(BASE_PATH.parent.resolve()))
+sys.path.append(str((BASE_PATH.parent / 'detection').resolve()))
+sys.path.append(str((BASE_PATH.parent / 'recognition').resolve()))
+
+# module or package level imports
+from detection import FaceDetector
+from recognizer_utils import Database
+
+K.set_image_data_format('channels_first')
 
 class FaceRecognizer:
     
     def __init__(self, path='vitals/database.json') -> None:
-        self.database = path
-        self.model = faceRecoModel(input_shape=(3, 96, 96))
+        self.model = face_encodings
         self.detector = FaceDetector()
-        self.model.load_weights(BASE_PATH / 'vitals/nn4.small2.v1.h5')
-        self.alignment = AlignDlib(str(BASE_PATH / 'vitals/landmarks.dat'))
-
-    @property
-    def database(self):
-        return self.__database
-
-    @database.setter
-    def database(self, path):
-        self.__database = defaultdict(list)
-        if path:
-            database = FaceRecognizer.from_json_file(BASE_PATH / path)
-            for data in database:
-                encodings = list(map(lambda array: np.array(array), data['encodings']))
-                self.__database['encodings'].extend(encodings)
-                self.__database['names'].extend([data['label']] * len(encodings))
-                self.__database[data['label']] = data['email']
-    
-    @staticmethod
-    def from_json_file(path):
-        with open(path) as file:
-            data = json.load(file)
-        return data
-
-    def align_face(self, image, bb=None):
-        return self.alignment.align(96, image, bb=bb,
-                            landmarkIndices=AlignDlib.OUTER_EYES_AND_NOSE)
-
-    def encode_face(self, image, bbox):
-        resized_image = self.align_face(image, bb=bbox)
-        image = np.around(np.transpose(resized_image, (2, 0, 1)) / 255.0, decimals=12)
-        train = np.array([image])
-        embedding = self.model.predict_on_batch(train)
-        return embedding
+        self.database = Database.from_json_file(BASE_PATH / path) if path else None
 
     def get_locations(self, image):
-        locations = self.detector(image)
-        coors = []
-        for loc in locations:
-            coors.append((loc[-1], loc[0], loc[1], loc[2]))
-        return coors
+        return self.detector(image)
 
     def get_faces(self, image):
-        results = []
         locations = self.detector(image)
+        ecodings = face_encodings(image, locations)
+        return list(zip(locations, ecodings))
 
-        for locs in locations:
-            dlibRect = dlib.rectangle(locs[0], locs[1], locs[2], locs[3])
-            face_encoding = self.encode_face(image, dlibRect)
-            results.append((locs, face_encoding))
-
-        return results
-
-    def compare_faces(self, encoding):
-        return np.linalg.norm(self.database['encodings'] - encoding, axis=1)
-
-    def face_distance(self, face_to_compare):
-        distances = []
-        for encoding in self.database['encodings']:
-            distances.append(np.linalg.norm(encoding - face_to_compare))
-        return np.array(distances)
-
-    def __call__(self, image, tolerance=0.5):
+    def __call__(self, image, tolerance=0.3):
         results = []
 
         for loc, encoding in self.get_faces(image):
             name = 'unknown'
             # find the euclidean distance between known faces and new face
-            distances = self.face_distance(encoding)
+            distances = face_distance(self.database.encodings, encoding)
             # index of matched face encoding with minimum euclidean distance
-            index = np.argmin(distances)
+            best_match_index = np.argmin(distances)
+            print(distances)
             # Check if the face is enough accurate to be recognized
-            if distances[index] <= tolerance:
-                name = self.database['names'][index]
+            if distances[best_match_index] <= tolerance:
+                name = self.database.names[best_match_index]
                 
             results.append((name, loc))
         
@@ -113,7 +64,7 @@ class FaceRecognizer:
 
 
 if __name__ == "__main__":
-    test_folder = BASE_PATH / 'test'
+    test_folder = BASE_PATH / 'tests'
     save_dir = BASE_PATH / 'results'
     model = FaceRecognizer()
 
