@@ -48,7 +48,6 @@ class Camera(BaseCamera):
         yield b'--frame\r\n'
 
         while Camera.streaming:
-            print('frames', Camera.streaming)
             frame = self.get_frame()
             for model in models:
                 # get inference results
