@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+{{ block.super }} - Add new student
+{% endblock title %}
+
+
+{% block stylesheets %}
+<link href="{% static 'vendor/image-uploader/css/image-uploader.min.css' %}" rel="stylesheet">
+<style>
+    .image-container {
+        position: relative;
+        max-width: 400px;
+        height: 450px;
+        overflow: hidden;
+    }
+
+    .image-container i {
+        font-size: 200px;
+    }
+
+    .image-container .image-previewer {
+        height: 100%;
+    }
+</style>
+{% endblock stylesheets %}
+
+
+
+
+{% block content %}
+<div class="row justify-content-center pt-5">
+    <div class="col-8">
+        <form method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-6">
+                    <h1>Update Student</h1>
+                    {% include 'shared/messages.html' %}
+
+                    <hr>
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                        {% if field.name != 'profile_image' %}
+                            {% include 'shared/field.html' %}
+                        {% endif %}
+                    {% endfor %}
+
+
+                    <!-- Image input box for providing input images for training -->
+                    <div class="input-field mt-4">
+                        <label class="active text-dark  ">Add Images For Training</label>
+                        <div class="input-images"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success mt-3">Update Student Details</button>
+                    <a href="{% url 'students-index' %}" class="btn btn-success mt-3">Back</a>
+                </div>
+
+                <!-- Profile Image Input -->
+                <div class="col-6">
+
+                    <!-- Prodile Image display box before upload -->
+                    <div class="w-75">
+                        <div class="image-container rounded p-1 border">
+                            <div class="image-previewer bg-gray-200 overflow-hidden d-flex justify-content-center align-items-center">
+                                <i id="preview-icon" class="bx bx-user text-gray-300 d-none" aria-hidden="true"></i>
+                                <img src="{{ form.profile_image.value.url }}" alt="student-profile" id="preview-image-on-upload" width="100%" class="rounded">
+                            </div>
+                        </div>
+                        <div class="custom-file mt-3">
+                            <input type="file" class="custom-file-input" id="Profile-image" name="profile_image">
+                            <label class="custom-file-label" for="Profile-image">Choose Image</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
+
+
+
+{% block scripts %}
+<script src="{% static 'vendor/image-uploader/js/image-uploader.min.js' %}"></script>
+
+<script>
+    $(document).ready(function () {
+        $('.input-images').imageUploader({
+            label: 'Drag & Drop files here or click to browse',
+            imagesInputName: 'images',
+            extensions: ['.jpg', '.jpeg', '.png', '.JPG', '.JPEG', '.PNG'],
+            maxFiles: 5,
+        });
+
+        function PreviewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    let image = $('#preview-image-on-upload');
+                    let icon = $('#preview-icon');
+                    image.attr('src', e.target.result);
+                    image.removeClass('d-none');
+                    icon.addClass('d-none');
+                }
+                $(input).next().text(input.files[0].name)
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $("#Profile-image").change(function () {
+            PreviewImage(this);
+        });
+    })
+</script>
+{% endblock scripts %}

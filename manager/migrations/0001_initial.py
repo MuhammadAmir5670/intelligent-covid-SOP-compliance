@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=255)),
                 ('roll_no', models.IntegerField(unique=True)),
                 ('email', models.EmailField(max_length=254, unique=True)),
-                ('profile_image', models.ImageField(upload_to=manager.utils.image_path)),
+                ('profile_image', models.ImageField(upload_to=manager.utils.profile_image_path)),
             ],
             options={
                 'ordering': ['roll_no'],

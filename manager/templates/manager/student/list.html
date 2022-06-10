@@ -84,20 +84,23 @@
                             <td class="align-middle">{{ student.roll_no }}</td>
                             <td class="align-middle text-center">
                                 <!-- Student Information Edit Button -->
-                                <button class="btn btn-sm btn-primary btn-icon-split">
+                                <a href="{% url 'students-update' student.id %}" class="btn btn-sm btn-primary btn-icon-split">
                                     <span class="icon text-white-50">
                                         <i class="fa fa-pencil" aria-hidden="true"></i>
                                     </span>
                                     <span class="text">Edit</span>
-                                </button>
+                                </a>
 
                                 <!-- Student Delete Button -->
-                                <button class="btn btn-sm btn-danger btn-icon-split">
-                                    <span class="icon text-white-50">
-                                        <i class="fa fa-trash" aria-hidden="true"></i>
-                                    </span>
-                                    <span class="text">Edit</span>
-                                </button>
+                                <form class="d-inline-block" method="post" action="{% url 'students-delete' student.id %}">
+                                    {% csrf_token %}
+                                    <button class="btn btn-sm btn-danger btn-icon-split">
+                                        <span class="icon text-white-50">
+                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                        </span>
+                                        <span class="text">delete</span>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     {% endfor %}
