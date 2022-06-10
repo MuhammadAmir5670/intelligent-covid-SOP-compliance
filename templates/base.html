@@ -31,7 +31,9 @@
     {% include 'shared/header.html' %}
     {% include 'shared/sidebar.html' %}
 
-    <div class="container-fluid">
+    <div class="container-fluid py-3">
+        {% include 'shared/messages.html' %}
+
         {% block content %} {% endblock content %}
     </div>
 
