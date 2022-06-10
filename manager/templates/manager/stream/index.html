@@ -3,8 +3,18 @@
 
 {% block stylesheets %}
 <style>
-    .stream-container i {
+    .stream-container #stream-icon {
         font-size: 200px;
+    }
+
+    .stream-container #stop-stream {
+        font-size: 40px;
+        font-weight: 500;
+    }
+
+    #stream-controls {
+        position: absolute;
+        bottom: 10px;
     }
 
     .stream-container {
@@ -19,11 +29,17 @@
 {% block content %}
 <div class="row justify-content-center align-items-center">
     <div class="col-7">
-        <div class="stream-container bg-gray-200 d-flex justify-content-center align-items-center">
+        <div class="stream-container bg-gray-200 d-flex justify-content-center align-items-center position-relative">
             <i id="stream-icon" class="fa fa-video-camera text-gray-500" aria-hidden="true"></i>
             <img src="" id="stream-display" class="d-none" width="100%" height="auto" alt="stream-frame">
+
+            <div id="stream-controls" class="d-none">
+                <button id="stop-stream" class="btn btn-outline-light rounded-circle btn-lg stream-runner d-inline-flex justify-content-center align-items-center py-3">
+                    <i class='bx bx-pause-circle'></i>
+                </button>
+            </div>
         </div>
-        
+
         <hr>
 
         <div class="controls text-center">
@@ -44,24 +60,24 @@
 
         const stream = $('#stream-display');
         const icon = $('#stream-icon');
+        const controls = $('#stream-controls');
 
         $('.stream-runner').on('click', start_stream);
+        $('#stop-stream').on('click', stop_stream)
 
         function start_stream(event) {
             let stream_url = `/dashboard/stream/web-cam/${event.target.id}`;
-            if (stream[0].classList.contains('d-none')) {
-                stream.attr('src', stream_url);
-                stream.toggleClass('d-none');
-                icon.toggleClass('d-none');
-            } else {
-                stop_stream();
-            }
+            stream.attr('src', stream_url);
+            stream.removeClass('d-none');
+            controls.removeClass('d-none')
+            icon.addClass('d-none');
         }
 
         function stop_stream() {
             stream.attr('src', '');
-            stream.toggleClass('d-none');
-            icon.toggleClass('d-none');
+            stream.addClass('d-none');
+            controls.addClass('d-none')
+            icon.removeClass('d-none');
         }
 
     });
