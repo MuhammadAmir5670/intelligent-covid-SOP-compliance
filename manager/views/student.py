@@ -17,7 +17,7 @@ def index_student(request):
 
 @require_http_methods(['GET'])
 def show_student(request, id):
-    student = get_object_or_404(Student, pk=id)
+    student = get_object_or_404(Student.objects.prefetch_related('encodings'), pk=id)
     return render(request, 'manager/student/show.html', {'student': student})
 
 

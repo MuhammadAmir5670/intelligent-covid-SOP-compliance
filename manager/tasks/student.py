@@ -3,7 +3,6 @@ import cv2
 import json
 
 from django.core.files.uploadedfile import UploadedFile
-from matplotlib.pyplot import locator_params
 
 from manager.models import Student
 from manager.apps import ManagerConfig
