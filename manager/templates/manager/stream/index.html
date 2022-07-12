@@ -7,7 +7,7 @@
         font-size: 200px;
     }
 
-    .stream-container #stop-stream {
+    .stream-container button#stop-stream {
         font-size: 40px;
         font-weight: 500;
     }
@@ -18,8 +18,7 @@
     }
 
     .stream-container {
-        margin-top: 60px;
-        height: 60vh;
+        height: 70vh;
         overflow: hidden;
     }
 </style>
@@ -28,25 +27,31 @@
 
 {% block content %}
 <div class="row justify-content-center align-items-center">
-    <div class="col-7">
+    <div class="col-8">
+        <!-- Source Input -->
+        <div class="form-group has-search d-flex justify-content-center align-items-center">
+            <label for="stream-source" class="mb-0">Stream Source</label>
+            <input type="text" id="stream-source" class="form-control w-75 ml-3" placeholder="192.168.0.15">
+        </div>
+        <span class="error" id="stream-source-error"></span>
+
         <div class="stream-container bg-gray-200 d-flex justify-content-center align-items-center position-relative">
             <i id="stream-icon" class="fa fa-video-camera text-gray-500" aria-hidden="true"></i>
             <img src="" id="stream-display" class="d-none" width="100%" height="auto" alt="stream-frame">
 
             <div id="stream-controls" class="d-none">
-                <button id="stop-stream" class="btn btn-outline-light rounded-circle btn-lg stream-runner d-inline-flex justify-content-center align-items-center py-3">
+                <button id="stop-stream" class="btn btn-outline-light rounded-circle btn-lg d-inline-flex justify-content-center align-items-center py-3">
                     <i class='bx bx-pause-circle'></i>
                 </button>
             </div>
         </div>
 
         <hr>
-
         <div class="controls text-center">
             <button class="btn btn-primary btn-lg stream-runner" id="mask-detection">Mask Detection</button>
             <button class="btn btn-primary btn-lg stream-runner ml-2" id="face-recognition">Face Recognition</button>
             <button class="btn btn-primary btn-lg stream-runner ml-2" id="distance-detection">Social Distancing</button>
-            <button class="btn btn-primary btn-lg stream-runner ml-2" id="combined-stream">Combined</button>
+            <button class="btn btn-primary btn-lg stream-runner ml-2" id="combined">Combined</button>
         </div>
     </div>
 </div>
@@ -59,18 +64,33 @@
     $(function () {
 
         const stream = $('#stream-display');
+        const source = $('#stream-source');
         const icon = $('#stream-icon');
         const controls = $('#stream-controls');
+        const validate_source_url = '{% url "stream-validate-source" %}'
 
         $('.stream-runner').on('click', start_stream);
         $('#stop-stream').on('click', stop_stream)
 
         function start_stream(event) {
-            let stream_url = `/dashboard/stream/web-cam/${event.target.id}`;
-            stream.attr('src', stream_url);
-            stream.removeClass('d-none');
-            controls.removeClass('d-none')
-            icon.addClass('d-none');
+            // 192.168.0.101:8080/video
+            
+            let device = source.val() ? `?source=http://${source.val()}` : '';
+            console.log(device);
+
+            fetch(`${validate_source_url}${device}`)
+            .then((response) => response.json() )
+            .then((data) => {
+                if (data.source) {
+                    let stream_url = `/dashboard/stream/web-cam/${event.target.id}${device}`;
+                    stream.attr('src', stream_url);
+                    stream.removeClass('d-none');
+                    controls.removeClass('d-none')
+                    icon.addClass('d-none');
+                } else {
+                    $('#stream-source-error').text('Could not start camera. invalid source given')
+                }
+            })
         }
 
         function stop_stream() {
