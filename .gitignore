@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+celerybeat-schedule.bak
+celerybeat-schedule.dat
+celerybeat-schedule.dir
+
 # C extensions
 *.so
 
@@ -27,8 +31,14 @@ face_recognition/inference/output
 .installed.cfg
 *.egg
 MANIFEST
+recognition/tests
+detection/tests
+recognition/results
+detection/results
 recognition/faces_database
 media/faces_database
+media/temp
+media/screen
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
