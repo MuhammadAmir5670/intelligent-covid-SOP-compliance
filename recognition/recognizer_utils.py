@@ -1,3 +1,4 @@
+from mimetypes import init
 import os
 import json
 import random
@@ -52,28 +53,48 @@ def apply_transform(image, num_transform=2):
     return img_out
 
 
+class Entity:
+
+    def __init__(self, encodings, label, payload={}):
+        self.label = label
+        self.encodings = list(map(lambda array: np.array(array), encodings))
+        
+        for key, value in payload.items():
+            setattr(self, key, value)
+
+
 class Database:
-    def __init__(self, encodings=[], names=[], emails={}) -> None:
-        self.encodings = encodings
-        self.names = names
-        self.emails = emails
+    def __init__(self) -> None:
+        self.__data = {}
 
     @classmethod
-    def from_json_file(cls, path):
+    def from_json_file(cls, path, key='label'):
         database = cls()
         with open(path) as file:
-            data = json.load(file)
+            entities = json.load(file)
 
-        for entitty in data:
-            encodings = list(map(lambda array: np.array(array), entitty["encodings"]))
-
-            database.encodings.extend(encodings)
-            database.names.extend([entitty["label"]] * len(encodings))
-            database.emails[entitty["label"]] = entitty["email"]
-
+        for entitty in entities:
+            label = entitty.pop(key)
+            database[label] = Entity(entitty.pop('encodings'), label, payload=entitty)
+            
         return database
 
     @staticmethod
     def to_json_file(data, path, name):
         with open(os.path.join(path, name), "w") as file:
             json.dump(data, file, indent=4)
+
+    def __getitem__(self, name: str):
+        return self.__data.get(name)
+
+    def __setitem__(self, name, value):
+        self.__data[name] = value
+
+    def __iter__(self):
+        return iter(self.__data)
+    
+    def items(self):
+        return self.__data.items()
+
+    def extend(self, name, encodings):
+        self.__getitem__(name).encodings.extend(encodings)

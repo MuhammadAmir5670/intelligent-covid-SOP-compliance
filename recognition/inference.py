@@ -33,18 +33,30 @@ class FaceRecognizer:
         ecodings = face_encodings(image, locations)
         return list(zip(locations, ecodings))
 
-    def __call__(self, image, tolerance=0.3):
+    def compare_faces(self, encoding):
+        labels = []
+        confidence = []
+
+        for label, data in self.database.items():
+            distances = face_distance(data.encodings, encoding)
+            best_match_index = np.argmin(distances)
+            confidence.append(distances[best_match_index])
+            labels.append(label)
+        
+        best_match_index = np.argmin(confidence)
+        return labels[best_match_index], confidence[best_match_index]
+
+    def __call__(self, image, tolerance=0.3, key='label'):
         results = []
 
         for loc, encoding in self.get_faces(image):
             name = 'unknown'
-            # find the euclidean distance between known faces and new face
-            distances = face_distance(self.database.encodings, encoding)
-            # index of matched face encoding with minimum euclidean distance
-            best_match_index = np.argmin(distances)
+
+            label, conf = self.compare_faces(encoding)
+
             # Check if the face is enough accurate to be recognized
-            if distances[best_match_index] <= tolerance:
-                name = self.database.names[best_match_index]
+            if conf <= tolerance:
+                name = getattr(self.database[label], key)
                 
             results.append((name, loc))
         
@@ -52,6 +64,7 @@ class FaceRecognizer:
 
     def mark(self, results, image):
         for label, coors in results:
+            cv2.imwrite(f'/home/dev/Documents/Python/face_app/recognition/{label}.jpg', image[coors[1]:coors[3], coors[0]: coors[2]])
             cv2.rectangle(image, (coors[0], coors[1]), (coors[2], coors[3]), [0,0,255], 2)
             cv2.rectangle(image, (coors[0], coors[3]), (coors[2], coors[3] + 50), (0, 0, 255), cv2.FILLED)
             cv2.putText(image, label, (coors[0]+10,coors[3]+40), cv2.FONT_HERSHEY_SIMPLEX, 1.5, [255,255,255], 2, cv2.LINE_AA)

@@ -21,7 +21,7 @@ class Detector:
     
     def __init__(self, path, threshold=0.3):
         self.threshold = threshold
-        self.device = select_device()
+        self.device = 'cpu'
         self.model = attempt_load(BASE_PATH / path, map_location=self.device)
         self.names = self.model.names if hasattr(self.model, 'names') else self.model.modules.names
 

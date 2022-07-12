@@ -31,7 +31,7 @@ class MaskDetector(Detector):
             cv2.rectangle(image, (x1, y1), (x2, y2), self.COLORS[label], 2)
 
             font = cv2.FONT_HERSHEY_DUPLEX
-            cv2.putText(image, label, (x1, y2), font, 1, self.COLORS[label], 2)
+            cv2.putText(image, label, (x1, y2+22), font, 1, self.COLORS[label], 2)
         
         return image
 
