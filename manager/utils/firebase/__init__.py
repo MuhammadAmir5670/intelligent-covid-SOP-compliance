@@ -1,0 +1,1 @@
+from .firebase_manager import app

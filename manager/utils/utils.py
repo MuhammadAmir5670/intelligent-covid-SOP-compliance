@@ -1,8 +1,11 @@
+import os
+
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 
-import os
+from recognition.recognizer_utils import Database, Entity
+
 
 def student_dir(student):
     return settings.BASE_DIR / f"media/faces_database/{student.name}-{student.roll_no}"
@@ -34,3 +37,19 @@ def save_temp_image(images):
         paths.append(default_storage.save(file_name, ContentFile(image.read())))
     
     return paths
+
+
+def load_faces_database_from_db(students, key):
+    database = Database()
+
+    for student in students:
+
+        if not hasattr(student, key) and not hasattr(student, 'encodings'):
+            continue
+    
+        label = student.__dict__.get(key)
+        encodings = student.encodings.all()
+
+        database[label] = Entity(map(lambda encoding: encoding.encoding(), encodings), label, student.__dict__)
+
+    return database

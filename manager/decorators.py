@@ -1,4 +1,3 @@
-from statistics import mode
 from manager.apps import ManagerConfig
 from django.http import Http404
 
@@ -8,9 +7,10 @@ def make_model(func):
         if isinstance(model, list):
             return func(request)
 
-        if model not in ManagerConfig.Models.keys():
+        model = model.replace('-', '_')
+        if not hasattr(ManagerConfig, model):
             raise Http404("Invalid Model")
 
-        return func(request, [ManagerConfig.Models[model]])
+        return func(request, [getattr(ManagerConfig, model)])
 
     return inner
