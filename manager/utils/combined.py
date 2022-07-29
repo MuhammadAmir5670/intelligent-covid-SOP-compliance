@@ -1,3 +1,4 @@
+from re import A
 import cv2
 import os
 from datetime import datetime, timedelta
@@ -6,8 +7,10 @@ from detection import MaskDetector
 from manager.models.student import Student
 from recognition import FaceRecognizer
 from manager.tasks.notifications import send_message
+from django.core.files.base import ContentFile
 
-from django.conf import Settings, settings
+from django.conf import settings
+from manager.models import Violation
 
 session = {}
 
@@ -62,6 +65,11 @@ def merge(frame, mask_detector, face_detector):
         frame = draw(frame, label, identity, location)
 
         if label != 'mask' and identity != 'unknown' and update_session(identity):
-            send_message.delay(identity, save_image(identity, frame))
+            student = Student.objects.get(roll_no=identity)
+            image = ContentFile(cv2.imencode('.jpg', frame)[1].tobytes())
+            violation = Violation.objects.create(screen_shot=image, student=student)
+            violation.screen_shot.save('output.jpg', image)
+            print(violation, student)
+            # send_message.delay(identity, save_image(identity, frame))
             
     return frame

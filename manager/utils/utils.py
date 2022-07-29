@@ -5,6 +5,7 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 
 from recognition.recognizer_utils import Database, Entity
+from datetime import datetime
 
 
 def student_dir(student):
@@ -16,6 +17,11 @@ def profile_image_path(instance, filename):
     file_name = os.path.join(f'faces_database/{instance.name}-{instance.roll_no}', f"profile{extension}")
     return file_name
 
+
+def screen_shot_image_path(instance, filename):
+    file_name, extension = os.path.splitext(filename)
+    file_name = os.path.join(f'screen/{instance.student.name}', f"screenshot-{instance.violation_time.timestamp()}{extension}")
+    return file_name
 
 def training_image_path(instance, filename):
     student = instance.student
