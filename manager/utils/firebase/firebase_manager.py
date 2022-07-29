@@ -6,7 +6,7 @@ from pathlib import Path
 from firebase_admin import credentials, messaging, auth
 from firebase_admin import storage, firestore
 from datetime import datetime
-from pprint import pprint
+from manager.utils import violation_verbose_values
 
 
 BASE_PATH = Path(os.path.dirname(os.path.abspath(__file__)))
@@ -62,19 +62,16 @@ class FireBaseAdmin:
                 'voilation': label
             })
 
-            self.send_notification(label, f"{user.get('nickname')} has been spotted with {label}", {
-                'name': user.get('nickname'),
-                'email': email,
-                'url': url,
-                'voilation': label,
-                'timestamp': datetime.now(),
+            self.send_notification(label, f"{user.get('nickname')} has been spotted with {violation_verbose_values[label]}", user.get('tokens'), {
+                'name': str(user.get('nickname')),
+                'email': str(email),
+                'url': str(url),
+                'voilation': str(label),
+                'timestamp': str(datetime.now()),
             })
 
 
 app = FireBaseAdmin()
 
 if __name__ == "__main__":
-    uid = app.get_uid_by_email('mrumair040@gmail.com')
-    user = app.db.collection('users').document(uid).get()
-    app.send_notification('Voilation', 'Ali Umair has just been spotted with no mask', user.get('tokens'), {'data': 'dummy data'})
-    # app.add_screenshot('/home/dev/Documents/Python/face_app/media/screen/7056/image-0.jpg', 'mrumair040@gmail.com', '7010')
+    app.add_screenshot('/home/dev/Documents/Python/face_app/media/faces_database/Abdul Mateen-7056/Abdul_Mateen-7056-2.jpeg', 'mrumair040@gmail.com', 'No Mask')
