@@ -7,6 +7,8 @@ from manager.models import Student
 import os
 import shutil
 
+from manager.models.violation import Violation
+
 
 @receiver(post_delete, sender=Student)
 def create_student_directory(sender, instance, **kwargs):
@@ -24,3 +26,7 @@ def update_student_directory(sender, instance, **kwargs):
         os.rename(source, student_dir)
     else:
         os.makedirs(student_dir)
+
+@receiver(post_delete, sender=Violation)
+def create_student_directory(sender, instance, **kwargs):
+    os.remove(instance.screen_shot.path)

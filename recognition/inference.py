@@ -55,7 +55,7 @@ class FaceRecognizer:
             label, conf = self.compare_faces(encoding)
 
             # Check if the face is enough accurate to be recognized
-            if conf <= tolerance:
+            if conf >= tolerance:
                 name = getattr(self.database[label], key)
                 
             results.append((name, loc))

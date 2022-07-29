@@ -1,3 +1,4 @@
+from re import A
 import cv2
 import os
 from datetime import datetime, timedelta
@@ -6,8 +7,11 @@ from detection import MaskDetector
 from manager.models.student import Student
 from recognition import FaceRecognizer
 from manager.tasks.notifications import send_message
+from django.core.files.base import ContentFile
+from django.core.cache import cache
 
-from django.conf import Settings, settings
+from django.conf import settings
+from manager.models import Violation
 
 session = {}
 
@@ -25,7 +29,7 @@ def draw(frame, label, identity, location):
     cv2.putText(frame, label, (x1 + 5, y1 - 10), font, 1, color, 2)
     cv2.putText(frame, identity, (x1 + 6, y2 + 25), font, 1.0, (255, 255, 255), 1)
 
-    return frame
+    return frame, ContentFile(cv2.imencode('.jpg', frame)[1].tobytes())
 
 def update_session(identity):
     if identity not in session.keys():
@@ -59,9 +63,21 @@ def merge(frame, mask_detector, face_detector):
             merged.append((label, 'unknown', coors))
 
     for label, identity, location in merged:
-        frame = draw(frame, label, identity, location)
+        if identity == 'unknown':
+            frame, _ = draw(frame, label, identity, location)
+            break
+        
+        # Fetch the student information and draw on the image
+        student = Student.objects.get(roll_no=identity)
+        frame, content = draw(frame, label, student.name, location)
 
-        if label != 'mask' and identity != 'unknown' and update_session(identity):
-            send_message.delay(identity, save_image(identity, frame))
+        if label != 'mask' and cache.get(identity) is None:
+            violation = Violation.objects.create(student=student, violation_type=label)
+            violation.screen_shot.save('output.jpg', content)
+            violation.save()
+
+            # store student record redis cache for given number of secondss
+            cache.set(identity, student, timeout=60) is None
+            send_message.delay(violation.id, label)
             
     return frame
